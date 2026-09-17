@@ -30,7 +30,6 @@ magsac_thresh = st.sidebar.slider("Outlier Rejection Limit (MAGSAC++)", 0.5, 3.5
 
 st.sidebar.markdown("---")
 
-# 1. CORE TECHNOLOGIES BOX
 st.sidebar.markdown("""
 <div style="background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.3); padding: 15px; border-radius: 5px; margin-bottom: 12px;">
     <h4 style="color: #00e5ff; font-family: 'Orbitron', sans-serif; font-size: 14px; margin-bottom: 10px;">🧬 Core Technologies Used</h4>
@@ -45,7 +44,6 @@ st.sidebar.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 2. DEEP LEARNING, MAGSAC++, HOMOGRAPHY & RMSE DETAILS BOX
 st.sidebar.markdown("""
 <div style="background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.3); padding: 15px; border-radius: 5px; margin-bottom: 12px;">
     <h4 style="color: #38bdf8; font-family: 'Orbitron', sans-serif; font-size: 14px; margin-bottom: 10px;">🧠 Deep Learning & Math Specs</h4>
@@ -58,9 +56,8 @@ st.sidebar.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 3. SAFETY & VALIDATION GUARDRAILS BOX
 st.sidebar.markdown("""
-<div style="background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.3); padding: 15px; border-radius: 5px;">
+<div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.3); padding: 15px; border-radius: 5px;">
     <h4 style="color: #f87171; font-family: 'Orbitron', sans-serif; font-size: 14px; margin-bottom: 10px;">🛡️ Safety & Validation Guardrails</h4>
     <ul style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #d1d5db; padding-left: 15px; line-height: 1.8;">
         <li><b>Mismatch Guard:</b> Geological Mismatch Detector</li>
@@ -70,24 +67,35 @@ st.sidebar.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+MAX_FILE_SIZE_MB = 200
+MAX_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
+
 col_a, col_b = st.columns(2)
 with col_a:
     st.markdown("#### A. SOURCE [Chandrayaan-2 Optical Image]")
     src_file = st.file_uploader("Upload Chandrayaan-2 Image", type=['jpg', 'jpeg', 'png', 'tif'], key="src_upload")
     if src_file:
-        src_meta = extract_geospatial_metadata(src_file)
-        src_pil = Image.open(src_file).convert("RGB")
-        st.caption(f"Loaded: {src_meta['width']}x{src_meta['height']} | CRS: {src_meta['crs']} | Est GSD: {src_meta['gsd_est']}")
-        st.image(src_pil, use_container_width=True)
+        if src_file.size > MAX_BYTES:
+            st.error("⚠️ Image size not suitable: Source file exceeds the 200MB maximum limit.")
+            src_file = None
+        else:
+            src_meta = extract_geospatial_metadata(src_file)
+            src_pil = Image.open(src_file).convert("RGB")
+            st.caption(f"Loaded: {src_meta['width']}x{src_meta['height']} | CRS: {src_meta['crs']} | Est GSD: {src_meta['gsd_est']}")
+            st.image(src_pil, use_container_width=True)
 
 with col_b:
     st.markdown("#### B. REFERENCE [Chandrayaan-2 or Lunar Reference Image]")
     ref_file = st.file_uploader("Upload Lunar Reference Target", type=['jpg', 'jpeg', 'png', 'tif'], key="ref_upload")
     if ref_file:
-        ref_meta = extract_geospatial_metadata(ref_file)
-        ref_pil = Image.open(ref_file).convert("RGB")
-        st.caption(f"Loaded: {ref_meta['width']}x{ref_meta['height']} | CRS: {ref_meta['crs']} | Est GSD: {ref_meta['gsd_est']}")
-        st.image(ref_pil, use_container_width=True)
+        if ref_file.size > MAX_BYTES:
+            st.error("⚠️ Image size not suitable: Reference file exceeds the 200MB maximum limit.")
+            ref_file = None
+        else:
+            ref_meta = extract_geospatial_metadata(ref_file)
+            ref_pil = Image.open(ref_file).convert("RGB")
+            st.caption(f"Loaded: {ref_meta['width']}x{ref_meta['height']} | CRS: {ref_meta['crs']} | Est GSD: {ref_meta['gsd_est']}")
+            st.image(ref_pil, use_container_width=True)
 
 if src_file and ref_file:
     if st.button("Run Registration Pipeline", type="primary"):
@@ -118,13 +126,12 @@ if src_file and ref_file:
             
             st.write(f"Verified inliers: **{inlier_count}/{raw_count} ({inlier_ratio:.1f}%)**")
             
-            # --- GEOLOGICAL SANITY CHECK FOR WRONG / UNRELATED IMAGES ---
+            # Geological sanity check for wrong / unrelated images
             if inlier_count < 25 or inlier_ratio < 5.0:
                 status.update(label="FAILED: Geological Mismatch Detected", state="error")
                 st.error("🚨 **GEOLOGICAL MISMATCH / WRONG CRATER PAIR DETECTED!**")
                 st.warning(f"The uploaded images lack sufficient common topological features. Inliers found: {inlier_count} ({inlier_ratio:.1f}%). Please upload overlapping or matching lunar/Chandrayaan-2 image tiles.")
                 st.stop()
-            # -----------------------------------------------------------
             
             st.write("☑ 5. Spatial distribution analysis — 4x4 topological matrix check.")
             grid, coverage_pct, uniformity_score = evaluate_4x4_spatial_uniformity(valid_ref, ref_np.shape)
@@ -307,7 +314,7 @@ if st.session_state.get("ran_pipeline", False):
     col_down1, col_down2, col_down3, col_down4 = st.columns(4)
     with col_down1:
         st.download_button("Download Registered Image", data=res_encoded, file_name="ISRO_Registered_Warp.png", mime="image/png")
-        st.download_button("Download Match Visualization", data=match_encoded, file_name="ISRO_Raw_Matches.png", mime="image/png")
+        st.download_button("Download Match Visualization", data=match_encoded, file_name="IS_Raw_Matches.png", mime="image/png")
     with col_down2:
         st.download_button("Download Verified Match Vis...", data=spatial_encoded, file_name="ISRO_Spatial_Verified.png", mime="image/png")
         report_text = f"ISRO Registration Audit:\nRaw: {raw_count}\nInliers: {inlier_count}\nVal RMSE: {selected['val_rmse']:.4f}px\nModel: {best_model_name}\n\nACTIVE MISSION SUBSYSTEMS:\n1. Fourier Phase Congruency (Sun-Angle Invariance)\n2. Gaussian Scale-Space (Scale Invariance)\n3. Multi-Scale LoFTR (Feature Extraction)\n4. USAC_MAGSAC++ (Geometric Verification)\n5. Kd-Tree ANMS (Spatial Uniformity)\n6. 2D Parabolic Peak (Sub-Pixel Precision)"
