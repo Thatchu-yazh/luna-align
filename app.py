@@ -57,8 +57,8 @@ st.sidebar.markdown("""
 """, unsafe_allow_html=True)
 
 st.sidebar.markdown("""
-<div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.3); padding: 15px; border-radius: 5px;">
-    <h4 style="color: #f87171; font-family: 'Orbitron', sans-serif; font-size: 14px; margin-bottom: 10px;">🛡️ Safety & Validation Guardrails</h4>
+<div style="background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.3); padding: 15px; border-radius: 5px;">
+    <h4 style="color: #00e5ff; font-family: 'Orbitron', sans-serif; font-size: 14px; margin-bottom: 10px;">🛡️ Safety & Validation Guardrails</h4>
     <ul style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #d1d5db; padding-left: 15px; line-height: 1.8;">
         <li><b>Mismatch Guard:</b> Geological Mismatch Detector</li>
         <li><b>Topological Check:</b> 4x4 Entropy Grid Audit</li>
