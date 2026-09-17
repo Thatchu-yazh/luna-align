@@ -45,8 +45,8 @@ st.sidebar.markdown("""
 """, unsafe_allow_html=True)
 
 st.sidebar.markdown("""
-<div style="background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.3); padding: 15px; border-radius: 5px; margin-bottom: 12px;">
-    <h4 style="color: #38bdf8; font-family: 'Orbitron', sans-serif; font-size: 14px; margin-bottom: 10px;">🧠 Deep Learning & Math Specs</h4>
+<div style="background: rgba(0, 229, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.3) padding: 15px; border-radius: 5px; margin-bottom: 12px;">
+    <h4 style="color: #00e5ff; font-family: 'Orbitron', sans-serif; font-size: 14px; margin-bottom: 10px;">🧠 Deep Learning & Math Specs</h4>
     <ul style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #d1d5db; padding-left: 15px; line-height: 1.8;">
         <li><b>LoFTR (Deep Learning):</b> Detector-free dense transformer matching across multi-modal sensor scales.</li>
         <li><b>USAC_MAGSAC++:</b> State-of-the-art robust geometric verification rejecting false feature matches.</li>
