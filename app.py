@@ -22,7 +22,7 @@ st.title("LUNA-ALIGN (ISRO Lunar Image Registration)")
 st.markdown("##### Multi-modal, Sun-angle and Scale-invariant Correspondence using Chandrayaan-2 Optical Images")
 st.caption("Align a Chandrayaan-2 optical image with a Chandrayaan-2 or lunar reference image using deep feature matching, robust geometric verification and image registration.")
 
-st.sidebar.markdown("### 🛰️ Input Configuration Used")
+st.sidebar.markdown("### 🛰️ Input Configurations")
 source_sensor = st.sidebar.selectbox("Source Payload", ["Chandrayaan-2 OHRC (0.25m)", "Chandrayaan-2 TMC-2 (5.0m)", "Chandrayaan-2 IIRS (80m)"])
 ref_sensor = st.sidebar.selectbox("Reference Payload", ["NASA LRO NAC Reference", "SELENE Ortho Target"])
 norm_mode = st.sidebar.selectbox("Illumination Normalization", ["CLAHE", "Phase_Congruency", "None"], index=0)
